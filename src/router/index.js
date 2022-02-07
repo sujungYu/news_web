@@ -5,6 +5,9 @@ import JobsView from '../views/JobsView.vue';
 import AskView from '../views/AskView.vue';
 import UserView from '../views/UserView.vue';
 import ItemView from '../views/ItemView.vue';
+import createListView from '../views/CreateListView';
+import bus from '../utils/bus.js'
+import { store } from '../store/index.js'
 
 Vue.use(VueRouter)
 
@@ -18,23 +21,68 @@ export const router = new VueRouter({
         {
             //path: url 주소
             path: '/news',
+            name: 'news',
             //component: url 주수로 갔을 때 표시될 컴포넌트
-            component: NewsView
+            component: NewsView,
+            beforeEnter: (to, from, next) => {
+                bus.$emit('start:spinner');
+                store.dispatch('FETCH_LIST', to.name)
+                .then(() => {
+                console.log('fetched');
+                bus.$emit('end:spinner')
+                next();
+                // bus.$emit('end:spinner')
+            })
+            .catch((err) => {
+                console.log(err);
+            })
+            }
+            // component: createListView('NewsView')
         },
         {
             path: '/ask',
-            component: AskView
+            name: 'ask',
+            component: AskView,
+            beforeEnter: (to, from, next) => {
+                bus.$emit('start:spinner');
+                store.dispatch('FETCH_LIST', to.name)
+                .then(() => {
+                console.log('fetched');
+                // bus.$emit('end:spinner')
+                next();
+                // bus.$emit('end:spinner')
+            })
+            .catch((err) => {
+                console.log(err);
+            })
+            }
+            // component: createListView('AskView')
         },
         {
             path: '/jobs',
-            component: JobsView
+            name: 'jobs',
+            component: JobsView,
+            beforeEnter: (to, from, next) => {
+                bus.$emit('start:spinner');
+                store.dispatch('FETCH_LIST', to.name)
+                .then(() => {
+                console.log('fetched');
+                // bus.$emit('end:spinner')
+                next();
+                // bus.$emit('end:spinner')
+            })
+            .catch((err) => {
+                console.log(err);
+            })
+            }
+            // component: createListView('JobsView')
         },
         {
-            path: '/user',
+            path: '/user/:id',
             component: UserView
         },
         {
-            path: '/item',
+            path: '/item/:id',
             component: ItemView
         }
     ]
